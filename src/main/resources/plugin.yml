@@ -1,0 +1,4 @@
+name: HunJobs
+version: '${project.version}'
+main: me.erisos.hunjobs.HunJobs
+api-version: '1.20'
