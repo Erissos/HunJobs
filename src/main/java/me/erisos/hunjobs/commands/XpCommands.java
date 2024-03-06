@@ -20,7 +20,7 @@ public class XpCommands {
         this.plugin = plugin;
         plugin.getCommandFramework().registerCommands(this);
     }
-    
+    //f
     @Command(
             name = "hunjobs.setxp",
             desc = "set job xp",
