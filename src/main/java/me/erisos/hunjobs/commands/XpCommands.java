@@ -6,7 +6,11 @@ import me.despical.commandframework.Cooldown;
 import me.despical.commons.configuration.ConfigUtils;
 import me.erisos.hunjobs.HunJobs;
 import me.erisos.hunjobs.user.LevelController;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 
 import java.util.List;
@@ -20,7 +24,6 @@ public class XpCommands {
         this.plugin = plugin;
         plugin.getCommandFramework().registerCommands(this);
     }
-    //f
     @Command(
             name = "hunjobs.setxp",
             desc = "set job xp",
@@ -116,6 +119,20 @@ public class XpCommands {
 
         }, () -> arguments.sendMessage("Böyle bir oyuncu yok"));
 
+    }
+
+    @Command(
+            name = "hunjobs.getmeta",
+            desc = "get item meta",
+            permission = "hjobs.admin.getmeta",
+            max = 2
+    )
+    public void getMeta(CommandArguments arguments) {
+        Player player = arguments.getSender();
+
+        ItemMeta meta = player.getItemInHand().getItemMeta();
+
+        Bukkit.broadcastMessage(String.valueOf(meta));
     }
 
 }

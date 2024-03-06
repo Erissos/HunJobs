@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -31,22 +32,39 @@ public class Woodcutter implements Listener {
         Player player = e.getPlayer();
         Block block = e.getBlock();
 
+        Block aboveBlock = block.getRelative(BlockFace.UP);
+        Block belowBlock = block.getRelative(BlockFace.DOWN);
+
+        ItemStack droppedLog = new ItemStack(Material.OAK_LOG);
+        ItemMeta meta = droppedLog.getItemMeta();
+
+
+
         if (block.getType() == Material.OAK_LOG && !player.isSneaking()) {
 
-            Block aboveBlock = block.getRelative(BlockFace.UP);
-            Block belowBlock = block.getRelative(BlockFace.DOWN);
             if (aboveBlock.getType() != Material.OAK_LOG || belowBlock.getType() == Material.DIRT || belowBlock.getType() == Material.GRASS_BLOCK) {
-                block.getMetadata("woodData").forEach(data -> System.out.println(data.value()));
-                if(block.getMetadata("woodData").stream().anyMatch(MetadataValue::asBoolean)) {
-                    return;
+
+                    if (meta.getCustomModelData() == 1) {
+                        e.setCancelled(true);
+                        e.setDropItems(true);
+
+                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> block.setType(Material.AIR), 10);
+                        droppedLog.setItemMeta(meta);
+                        meta.setCustomModelData(1);
+
+                        block.getWorld().dropItemNaturally(block.getLocation(), droppedLog);
+                    }
+
+
+                if (!(meta.getCustomModelData() == 1)) {
+                    Random random = new Random();
+                    if (random.nextInt(100) < 60) {
+                        droppedLog.setItemMeta(meta);
+                        meta.setCustomModelData(1);
+                        block.getWorld().dropItemNaturally(block.getLocation(), droppedLog);
+                    }
                 }
-                Random random = new Random();
-                if (random.nextInt(100) < 1) {
-                    var value = new FixedMetadataValue(plugin, true);
-                    var dropWood = block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.OAK_LOG, 1));
-                    block.setMetadata("woodData", value);
-                    dropWood.setMetadata("woodData", value);
-                }
+
             }
         }
     }
