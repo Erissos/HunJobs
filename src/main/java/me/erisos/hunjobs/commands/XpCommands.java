@@ -5,21 +5,27 @@ import me.despical.commandframework.CommandArguments;
 import me.despical.commandframework.Cooldown;
 import me.despical.commons.configuration.ConfigUtils;
 import me.erisos.hunjobs.HunJobs;
+import me.erisos.hunjobs.user.LevelController;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
+
+import java.util.List;
 import java.util.UUID;
 
 public class XpCommands {
 
-    HunJobs plugin = JavaPlugin.getPlugin(HunJobs.class);
+    private final HunJobs plugin;
 
+    public XpCommands (HunJobs plugin) {
+        this.plugin = plugin;
+        plugin.getCommandFramework().registerCommands(this);
+    }
+    
     @Command(
             name = "hunjobs.setxp",
             desc = "set job xp",
             permission = "hjobs.admin.setxp",
-            max = 3,
-            senderType = Command.SenderType.PLAYER
+            max = 3
     )
     @Cooldown(
             cooldown = 3
@@ -29,26 +35,87 @@ public class XpCommands {
         arguments.getPlayer(0).ifPresentOrElse(p-> {
             UUID uuid = p.getUniqueId();
 
-            if (arguments.getArgument(2).matches("-?\\d+(\\.\\d+)?")) {
+            int xp = config.getInt(uuid + "." + arguments.getArgument(1) + ".xp");
+
+            if (!arguments.isNumeric(arguments.getArgument(2))) {
                 arguments.sendMessage("Sadece tam sayıları yazabilirsin.");
                 return;
             }
 
-            switch (arguments.getArgument(1)) {
-                case "woodcutter":
-                    if (config.contains(uuid.toString() + ".woodcutter")) {
-                        config.set(uuid.toString() + ".woodcutter", arguments.getArgumentAsInt(2));
-                    }
-                    break;
-                case "mining":
-                    if (config.contains(uuid.toString() + ".mining")) {
-                        config.set(uuid.toString() + ".mining", arguments.getArgumentAsInt(2));
-                    }
-                    break;
+            if (List.of("woodcutter", "mining", "fisherman", "hunter", "craftsman", "enchanter").contains(arguments.getArgument(1))) {
+                config.set(uuid + "." + arguments.getArgument(1) + ".xp", arguments.getArgumentAsInt(2));
+                ConfigUtils.saveConfig(plugin, config, "data");
+
+                LevelController.updateLevel(arguments.getSender(), arguments.getArgument(1));
+                return;
             }
+
+            arguments.sendMessage("bla bla");
+        }, () -> arguments.sendMessage("Böyle bir oyuncu yok"));
+
+    }
+
+    @Command(
+            name = "hunjobs.addxp",
+            desc = "add job xp",
+            permission = "hjobs.admin.addxp",
+            max = 3
+    )
+    @Cooldown(
+            cooldown = 3
+    )
+    public void addXp(CommandArguments arguments) {
+        FileConfiguration config = ConfigUtils.getConfig(plugin, "data");
+        arguments.getPlayer(0).ifPresentOrElse(p-> {
+            UUID uuid = p.getUniqueId();
+
+            if (!arguments.isNumeric(arguments.getArgument(2))) {
+                arguments.sendMessage("Sadece tam sayıları yazabilirsin.");
+                return;
+            }
+
+            if (List.of("woodcutter", "mining", "fisherman", "hunter", "craftsman", "enchanter").contains(arguments.getArgument(1))) {
+                config.set(uuid + "." + arguments.getArgument(1) + ".xp", config.getInt(uuid + "." + arguments.getArgument(1) + ".xp") + arguments.getArgumentAsInt(2));
+                ConfigUtils.saveConfig(plugin, config, "data");
+                return;
+            }
+            arguments.sendMessage("bla bla");
 
 
         }, () -> arguments.sendMessage("Böyle bir oyuncu yok"));
 
     }
+
+
+    @Command(
+            name = "hunjobs.removexp",
+            desc = "add job xp",
+            permission = "hjobs.admin.removexp",
+            max = 3
+    )
+    @Cooldown(
+            cooldown = 3
+    )
+    public void removeXp(CommandArguments arguments) {
+        FileConfiguration config = ConfigUtils.getConfig(plugin, "data");
+        arguments.getPlayer(0).ifPresentOrElse(p-> {
+            UUID uuid = p.getUniqueId();
+
+            if (!arguments.isNumeric(arguments.getArgument(2))) {
+                arguments.sendMessage("Sadece tam sayıları yazabilirsin.");
+                return;
+            }
+
+            if (List.of("woodcutter", "mining", "fisherman", "hunter", "craftsman", "enchanter").contains(arguments.getArgument(1))) {
+                config.set(uuid + "." + arguments.getArgument(1) + ".xp", config.getInt(uuid + "." + arguments.getArgument(1) + ".xp") - arguments.getArgumentAsInt(2));
+                ConfigUtils.saveConfig(plugin, config, "data");
+                return;
+            }
+            arguments.sendMessage("bla bla");
+
+
+        }, () -> arguments.sendMessage("Böyle bir oyuncu yok"));
+
+    }
+
 }

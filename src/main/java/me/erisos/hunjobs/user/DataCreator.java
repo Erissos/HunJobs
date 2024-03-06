@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.UUID;
 
 public class DataCreator implements Listener {
@@ -21,15 +22,13 @@ public class DataCreator implements Listener {
         UUID uuid = player.getUniqueId();
 
         FileConfiguration config = ConfigUtils.getConfig(plugin, "data");
+        List.of("woodcutter", "mining", "hunter", "fisherman", "enchanter").forEach(job -> {
+            config.set(uuid + ".%s.level".formatted(job), 0);
+            config.set(uuid + ".%s.xp".formatted(job), 0);
+        });
 
-        if (!config.contains(uuid.toString() + ".woodcutter")) {
-            config.set(uuid.toString() + ".woodcutter", 0);
-        }
-        if (!config.contains(uuid.toString() + ".mining")) {
-            config.set(uuid.toString() + ".mining", 0);
-        }
-
-        ConfigUtils.saveConfig(plugin, config, "messages");
+        ConfigUtils.saveConfig(plugin, config, "data");
     }
 
 }
+// craftsman,enchanter,woodcutter,mining,fisherman,hunter
