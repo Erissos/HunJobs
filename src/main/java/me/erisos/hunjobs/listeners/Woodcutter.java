@@ -81,7 +81,7 @@ public class Woodcutter implements Listener {
             return;
         }
 
-        if (block.getType() == Material.OAK_LOG && !player.isSneaking()) {
+        if (block.getType().toString().contains("_LOG") && !player.isSneaking()) {
 
             Block aboveBlock = block.getRelative(BlockFace.UP);
             Block belowBlock = block.getRelative(BlockFace.DOWN);
@@ -116,7 +116,7 @@ public class Woodcutter implements Listener {
             return;
         }
 
-        if (block.getType() == Material.OAK_LOG && !player.isSneaking()) {
+        if (block.getType().toString().contains("_LOG") && !player.isSneaking()) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 30 ,0) );
         }
     }
