@@ -80,6 +80,8 @@ public class XpCommands {
             if (List.of("woodcutter", "mining", "fisherman", "hunter", "craftsman", "enchanter").contains(arguments.getArgument(1))) {
                 config.set(uuid + "." + arguments.getArgument(1) + ".xp", config.getInt(uuid + "." + arguments.getArgument(1) + ".xp") + arguments.getArgumentAsInt(2));
                 ConfigUtils.saveConfig(plugin, config, "data");
+
+                LevelController.updateLevel(arguments.getSender(), arguments.getArgument(1));
                 return;
             }
             arguments.sendMessage("bla bla");
@@ -112,6 +114,8 @@ public class XpCommands {
             if (List.of("woodcutter", "mining", "fisherman", "hunter", "craftsman", "enchanter").contains(arguments.getArgument(1))) {
                 config.set(uuid + "." + arguments.getArgument(1) + ".xp", config.getInt(uuid + "." + arguments.getArgument(1) + ".xp") - arguments.getArgumentAsInt(2));
                 ConfigUtils.saveConfig(plugin, config, "data");
+
+                LevelController.updateLevel(arguments.getSender(), arguments.getArgument(1));
                 return;
             }
             arguments.sendMessage("bla bla");

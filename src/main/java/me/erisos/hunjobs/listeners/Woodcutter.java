@@ -1,6 +1,7 @@
-package me.erisos.hunjobs.events;
+package me.erisos.hunjobs.listeners;
 
 import me.erisos.hunjobs.HunJobs;
+import me.erisos.hunjobs.user.LevelController;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,13 +10,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.List;
 import java.util.Random;
 
 public class Woodcutter implements Listener {
@@ -35,37 +32,18 @@ public class Woodcutter implements Listener {
         Block aboveBlock = block.getRelative(BlockFace.UP);
         Block belowBlock = block.getRelative(BlockFace.DOWN);
 
-        ItemStack droppedLog = new ItemStack(Material.OAK_LOG);
-        ItemMeta meta = droppedLog.getItemMeta();
+        if (!(LevelController.getLevel(player, "woodcutter") >= 1)) {
+            return;
+        }
+        if (block.getType().toString().contains("_LOG") && !player.isSneaking()) {
 
+            if (aboveBlock.getType() == Material.OAK_LOG || aboveBlock.getType() == Material.OAK_LEAVES || belowBlock.getType() == Material.DIRT || belowBlock.getType() == Material.OAK_LOG) {
 
-
-        if (block.getType() == Material.OAK_LOG && !player.isSneaking()) {
-
-            if (aboveBlock.getType() != Material.OAK_LOG || belowBlock.getType() == Material.DIRT || belowBlock.getType() == Material.GRASS_BLOCK) {
-
-                    if (meta.getCustomModelData() == 1) {
-                        e.setCancelled(true);
-                        e.setDropItems(true);
-
-                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> block.setType(Material.AIR), 10);
-                        droppedLog.setItemMeta(meta);
-                        meta.setCustomModelData(1);
-
-                        block.getWorld().dropItemNaturally(block.getLocation(), droppedLog);
-                    }
-
-
-                if (!(meta.getCustomModelData() == 1)) {
                     Random random = new Random();
-                    if (random.nextInt(100) < 60) {
-                        droppedLog.setItemMeta(meta);
-                        meta.setCustomModelData(1);
-                        block.getWorld().dropItemNaturally(block.getLocation(), droppedLog);
+                    if (random.nextInt(100) < 69) {
+                        block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(block.getType()));
                     }
-                }
-
-            }
+           }
         }
     }
 
@@ -113,7 +91,7 @@ public class Woodcutter implements Listener {
         var hand = itemInHand == Material.AIR;
 
         if (Hoe1 || Hoe2 || Hoe3 || Hoe4 || Hoe5 || Shears || hand) {
-            if (List.of(Material.OAK_LEAVES, Material.BIRCH_LEAVES).contains(block.getType())) {
+            if (block.getType().toString().contains("_LEAVES")) {
                 Random random = new Random();
                 if (random.nextInt(100) < 10) {
                     block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.APPLE, 1));
@@ -121,6 +99,10 @@ public class Woodcutter implements Listener {
             }
         }
 
+    }
+
+    @EventHandler
+    public void köktenMüdahale(BlockBreakEvent e) {
 
     }
 }

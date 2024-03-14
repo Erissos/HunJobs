@@ -2,7 +2,8 @@ package me.erisos.hunjobs;
 
 import me.despical.commandframework.CommandFramework;
 import me.erisos.hunjobs.commands.XpCommands;
-import me.erisos.hunjobs.events.Woodcutter;
+import me.erisos.hunjobs.listeners.Mining;
+import me.erisos.hunjobs.listeners.Woodcutter;
 import me.erisos.hunjobs.user.DataCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,6 +22,7 @@ public final class HunJobs extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DataCreator(),this);
         new XpCommands(this);
         new Woodcutter(this);
+        new Mining(this);
     }
 
     private void setupConfigurationFiles() {
